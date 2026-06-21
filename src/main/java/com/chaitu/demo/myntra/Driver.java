@@ -1,5 +1,7 @@
 package com.chaitu.demo.myntra;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,10 +10,10 @@ public class Driver {
 
     private static final String URL1 = "https://www.myntra.com/studio/influencer?id=tFLOgMr19O&affiliateId=tFLOgMr19O&shared=true&utm_medium=social_share_ugc_profile&utm_source=ugc_affiliate&utm_campaign=tFLOgMr19O&affiliate_id=tFLOgMr19O";
 
-    private static final int INITIAL_WAIT_MS = 3000;
+    private static final int INITIAL_WAIT_MS = 1200;
     private static final int CLICK_WAIT_MS = 1000;
     private static int totalClicks = 0;
-    private static final int POST_SCROLL_WAIT_MS = 1500;
+    private static final int POST_SCROLL_WAIT_MS = 500;
     private static final int MAX_POSTS = 50;
     private static final int MAX_PRODUCT_SCROLLS = 10;
     private static final int MAX_POST_SCROLL_ATTEMPTS = 10;
@@ -22,7 +24,7 @@ public class Driver {
             throws Exception {
 
         long startedAt = System.nanoTime();
-        System.out.println("starting123 ..");
+        System.out.println("starting123 .. "+ LocalDateTime.now());
 
         if (!openAndPrepareFeed()) {
             printElapsedSeconds(startedAt);
@@ -91,7 +93,7 @@ public class Driver {
             }
 
             AdbUtils.scrollLittleUntilTray(550, 1);
-            Thread.sleep(INITIAL_WAIT_MS);
+            Thread.sleep(500);
         }
     }
 
@@ -164,16 +166,16 @@ public class Driver {
             }
 
             System.out.println("    Clicked tray " + (i + 1)
-                    + ": " + product.brand + " -> " + product.price);
+                    + ": " + product.brand + " -> " + product.price +" at : "+ LocalDateTime.now());
 
             AdbUtils.tap(product.x, product.y);
             Thread.sleep(CLICK_WAIT_MS);
 
             AdbUtils.clicktoBackButoon();
-            Thread.sleep(500);
+            Thread.sleep(CLICK_WAIT_MS);
 
             totalClicks++;
-            waitForProductTrayVisible(MAX_FIRST_TRAY_ATTEMPTS);
+           // waitForProductTrayVisible(MAX_FIRST_TRAY_ATTEMPTS);
         }
     }
 

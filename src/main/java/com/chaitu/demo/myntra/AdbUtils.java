@@ -63,7 +63,7 @@ public class AdbUtils {
 
             swipeVertical(distancePx);
 
-            Thread.sleep(1500);
+            Thread.sleep(500);
             dumpUI();
 
             if (UiParser.hasProductTray()) {
@@ -134,14 +134,14 @@ public class AdbUtils {
                 "/sdcard/ui.xml"
         );
 
-        execute(
-                ADB,
-                "-s",
-                DEVICE,
-                "pull",
-                "/sdcard/ui.xml",
-                numberedDumpPath
-        );
+        // execute(
+        //         ADB,
+        //         "-s",
+        //         DEVICE,
+        //         "pull",
+        //         "/sdcard/ui.xml",
+        //         numberedDumpPath
+        // );
 
         execute(
                 ADB,
