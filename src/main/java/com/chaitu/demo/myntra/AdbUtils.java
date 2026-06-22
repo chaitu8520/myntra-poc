@@ -1,6 +1,8 @@
 package com.chaitu.demo.myntra;
 
 import java.io.IOException;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,7 +13,7 @@ public class AdbUtils {
             "C:\\Program Files\\BlueStacks_nxt\\HD-Adb.exe";
 
     private static final String DEVICE =
-            "127.0.0.1:5555";
+            "emulator-5584";
     private static final String UI_XML_PATH =
             "ui.xml";
     private static final Path UI_DUMP_DIR =
@@ -27,6 +29,31 @@ public class AdbUtils {
 
         process.waitFor();
     }
+
+    public static String executeAndRead(String... command)
+            throws IOException, InterruptedException {
+
+        ProcessBuilder builder = new ProcessBuilder(command);
+        builder.redirectErrorStream(true);
+
+        Process process = builder.start();
+
+        StringBuilder output = new StringBuilder();
+        try (BufferedReader reader =
+                     new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (output.length() > 0) {
+                    output.append(System.lineSeparator());
+                }
+                output.append(line);
+            }
+        }
+
+        process.waitFor();
+        return output.toString().trim();
+    }
+
     public static void scrollLittle() throws Exception {
 
         scrollLittle(420);

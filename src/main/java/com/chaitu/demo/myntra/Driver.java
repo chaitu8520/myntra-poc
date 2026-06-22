@@ -1,6 +1,5 @@
 package com.chaitu.demo.myntra;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +21,16 @@ public class Driver {
 
     public static void main(String[] args)
             throws Exception {
+        long startedAt = System.nanoTime();
+        System.out.println("starting123 .. "+ LocalDateTime.now());
+
+        processPostTrayClicks();
+        VisitPosts.visitPosts();
+        printElapsedSeconds(startedAt);
+    }
+
+    public static void processPostTrayClicks()
+            throws Exception {
 
         long startedAt = System.nanoTime();
         System.out.println("starting123 .. "+ LocalDateTime.now());
@@ -30,6 +39,7 @@ public class Driver {
             printElapsedSeconds(startedAt);
             return;
         }
+
         processFeed();
         System.out.println("DONE clicking , totalClicks : "+totalClicks);
         printElapsedSeconds(startedAt);
@@ -309,6 +319,7 @@ public class Driver {
         double elapsedSeconds = elapsedNanos / 1_000_000_000.0;
 
         System.out.printf("Total time: %.2f seconds%n", elapsedSeconds);
+        System.out.printf("Total time: %.2f minutes %n", elapsedSeconds/60.0);
     }
 
 }
