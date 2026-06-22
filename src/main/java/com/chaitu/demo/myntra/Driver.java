@@ -24,7 +24,7 @@ public class Driver {
         long startedAt = System.nanoTime();
         System.out.println("starting123 .. "+ LocalDateTime.now());
 
-        processPostTrayClicks();
+     //   processPostTrayClicks();
         VisitPosts.visitPosts();
         printElapsedSeconds(startedAt);
     }

@@ -24,6 +24,7 @@ public class VisitPosts {
                     Thread.sleep(1000);
                     AdbUtils.openLink(postUrl);
                     Thread.sleep(1000);
+                    AdbUtils.scrollLittle(300);
                     System.out.println(opened++);// Wait for 2 seconds before opening the next post
                 } catch (Exception e) {
                     e.printStackTrace();
