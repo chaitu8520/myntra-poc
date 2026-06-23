@@ -1,7 +1,10 @@
 package com.chaitu.demo.myntra;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class VisitPosts {
     private static final String ADB =
@@ -16,20 +19,29 @@ public class VisitPosts {
             "9622041", "9621997", "6650396"));
 
     public  static void visitPosts() {
-        int opened=0;
+        Set<String> seen = new HashSet<>();
+        int opened = 0;
 
-            for (String postId : postsId) {
-                String postUrl = url.replace("{postId}", postId);
-                try {
-                    Thread.sleep(1000);
-                    AdbUtils.openLink(postUrl);
-                    Thread.sleep(1000);
-                    AdbUtils.scrollLittle(300);
-                    System.out.println(opened++);// Wait for 2 seconds before opening the next post
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        while (seen.size() < postsId.size()) {
+
+            String postId;
+            do {
+                postId = postsId.get(ThreadLocalRandom.current().nextInt(postsId.size()));
+            } while (seen.contains(postId));
+
+            seen.add(postId);
+
+            String postUrl = url.replace("{postId}", postId);
+            try {
+                Thread.sleep(500);
+                AdbUtils.openLink(postUrl);
+                Thread.sleep(1000);
+                AdbUtils.scrollLittle(500);
+                System.out.println(opened++ + " -> " + postId);
+            } catch (Exception e) {
+                e.printStackTrace();
             }
+        }
 
     }
 }

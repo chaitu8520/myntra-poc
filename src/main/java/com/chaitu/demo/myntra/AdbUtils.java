@@ -13,7 +13,7 @@ public class AdbUtils {
             "C:\\Program Files\\BlueStacks_nxt\\HD-Adb.exe";
 
     private static final String DEVICE =
-            "emulator-5584";
+            "emulator-5554";
     private static final String UI_XML_PATH =
             "ui.xml";
     private static final Path UI_DUMP_DIR =
