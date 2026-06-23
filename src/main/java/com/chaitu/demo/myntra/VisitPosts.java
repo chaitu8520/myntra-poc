@@ -36,6 +36,8 @@ public class VisitPosts {
                 Thread.sleep(500);
                 AdbUtils.openLink(postUrl);
                 Thread.sleep(1000);
+                AdbUtils.dumpUI();
+                toggleLikeIfNeeded();
                 AdbUtils.scrollLittle(500);
                 System.out.println(opened++ + " -> " + postId);
             } catch (Exception e) {
@@ -43,5 +45,23 @@ public class VisitPosts {
             }
         }
 
+    }
+
+    private static void toggleLikeIfNeeded() throws Exception {
+
+        if (UiParser.hasVisibleContentDesc("studio_post_like_true")) {
+            System.out.println("    already liked, skipping");
+            return;
+        }
+
+        int[] likeButton = UiParser.findClickableCenterByContentDesc("studio_post_like_false");
+        if (likeButton == null) {
+            System.out.println("    like button not found");
+            return;
+        }
+
+        AdbUtils.tap(likeButton[0], likeButton[1]);
+        Thread.sleep(750);
+        System.out.println("    liked post");
     }
 }

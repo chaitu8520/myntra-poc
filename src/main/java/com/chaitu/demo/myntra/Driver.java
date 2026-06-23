@@ -1,16 +1,20 @@
 package com.chaitu.demo.myntra;
 
 import java.time.LocalDateTime;
+import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class Driver {
 
-    private static final String URL1 = "https://www.myntra.com/studio/influencer?id=tFLOgMr19O&affiliateId=tFLOgMr19O&shared=true&utm_medium=social_share_ugc_profile&utm_source=ugc_affiliate&utm_campaign=tFLOgMr19O&affiliate_id=tFLOgMr19O";
+   private static final String URL1 = "https://www.myntra.com/studio/influencer?id=tFLOgMr19O&affiliateId=tFLOgMr19O&shared=true&utm_medium=social_share_ugc_profile&utm_source=ugc_affiliate&utm_campaign=tFLOgMr19O&affiliate_id=tFLOgMr19O";
+    // private static final String URL1 = "https://www.myntra.com/studio/influencer?id=uWLfyzEKqu&utm_source=social_share_ugc_profile&utm_medium=deeplink&utm_campaign=social_share_ugc_profile_deeplink";
 
     private static final int INITIAL_WAIT_MS = 1200;
     private static final int CLICK_WAIT_MS = 1000;
+    private static final int CLICK_WAIT_MS_1500 = 1500;
     private static int totalClicks = 0;
     private static final int POST_SCROLL_WAIT_MS = 500;
     private static final int MAX_POSTS = 50;
@@ -21,12 +25,33 @@ public class Driver {
 
     public static void main(String[] args)
             throws Exception {
+
+        runBlueStacksConnector();
+
         long startedAt = System.nanoTime();
         System.out.println("starting123 .. "+ LocalDateTime.now());
         VisitPosts.visitPosts();
-        processPostTrayClicks();
+//        processPostTrayClicks();
 
         printElapsedSeconds(startedAt);
+    }
+
+    private static void runBlueStacksConnector() throws IOException, InterruptedException {
+
+        String script = new File("run-myntra.bat").getAbsolutePath();
+
+        Process process = new ProcessBuilder(
+                "cmd",
+                "/c",
+                script
+        )
+                .inheritIO()
+                .start();
+
+        int exitCode = process.waitFor();
+        if (exitCode != 0) {
+            throw new IllegalStateException("BlueStacks connector failed with exit code " + exitCode);
+        }
     }
 
     public static void processPostTrayClicks()
@@ -180,6 +205,7 @@ public class Driver {
 
             AdbUtils.tap(product.x, product.y);
             Thread.sleep(CLICK_WAIT_MS);
+            AdbUtils.scrollLittle(7000);
 
             AdbUtils.clicktoBackButoon();
             Thread.sleep(CLICK_WAIT_MS);

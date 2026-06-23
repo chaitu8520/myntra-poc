@@ -321,6 +321,42 @@ public class UiParser {
 
     }
 
+    public static boolean hasVisibleContentDesc(String expectedContentDesc)
+            throws Exception {
+
+        if (expectedContentDesc == null || expectedContentDesc.isBlank()) {
+            return false;
+        }
+
+        DocumentBuilder builder =
+                DocumentBuilderFactory.newInstance()
+                        .newDocumentBuilder();
+
+        Document document =
+                builder.parse(new File("ui.xml"));
+
+        NodeList nodes =
+                document.getElementsByTagName("node");
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+
+            Element node = (Element) nodes.item(i);
+            String contentDesc = node.getAttribute("content-desc");
+
+            if (expectedContentDesc.equalsIgnoreCase(contentDesc.trim())) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public static int[] findClickableCenterByContentDesc(String expectedContentDesc)
+            throws Exception {
+
+        return findClickableCenterByAttribute("content-desc", expectedContentDesc);
+    }
+
     private static Element findClickableAncestor(Element node) {
 
         Node current = node;
@@ -338,6 +374,58 @@ public class UiParser {
 
         return null;
 
+    }
+
+    private static int[] findClickableCenterByAttribute(
+            String attributeName,
+            String expectedValue) throws Exception {
+
+        if (expectedValue == null || expectedValue.isBlank()) {
+            return null;
+        }
+
+        DocumentBuilder builder =
+                DocumentBuilderFactory.newInstance()
+                        .newDocumentBuilder();
+
+        Document document =
+                builder.parse(new File("ui.xml"));
+
+        NodeList nodes =
+                document.getElementsByTagName("node");
+
+        Pattern pattern =
+                Pattern.compile("\\[(\\d+),(\\d+)\\]\\[(\\d+),(\\d+)\\]");
+
+        for (int i = 0; i < nodes.getLength(); i++) {
+
+            Element node = (Element) nodes.item(i);
+            String value = node.getAttribute(attributeName);
+
+            if (value == null || !expectedValue.equalsIgnoreCase(value.trim())) {
+                continue;
+            }
+
+            Element clickable = findClickableAncestor(node);
+            if (clickable == null) {
+                clickable = node;
+            }
+
+            String bounds = clickable.getAttribute("bounds");
+            Matcher matcher = pattern.matcher(bounds);
+            if (!matcher.find()) {
+                continue;
+            }
+
+            int x1 = Integer.parseInt(matcher.group(1));
+            int y1 = Integer.parseInt(matcher.group(2));
+            int x2 = Integer.parseInt(matcher.group(3));
+            int y2 = Integer.parseInt(matcher.group(4));
+
+            return new int[] {(x1 + x2) / 2, (y1 + y2) / 2};
+        }
+
+        return null;
     }
 
     private static String findDescendantText(Element root, String contentDesc) {

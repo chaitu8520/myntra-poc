@@ -10,15 +10,67 @@ import java.nio.file.Paths;
 public class AdbUtils {
 
     private static final String ADB =
-            "C:\\Program Files\\BlueStacks_nxt\\HD-Adb.exe";
+            System.getenv().getOrDefault(
+                    "BLUESTACKS_ADB",
+                    "C:\\Program Files\\BlueStacks_nxt\\HD-Adb.exe");
 
-    private static final String DEVICE =
-            "emulator-5554";
+    private static final String DEVICE = resolveDevice();
     private static final String UI_XML_PATH =
             "ui.xml";
     private static final Path UI_DUMP_DIR =
             Paths.get("C:\\myntra");
     private static int dumpIndex = 1;
+
+    private static String resolveDevice() {
+
+        String configuredDevice =
+                System.getenv("BS_ADB_DEVICE");
+
+        if (configuredDevice != null && !configuredDevice.isBlank()) {
+            return configuredDevice.trim();
+        }
+
+        configuredDevice =
+                System.getProperty("bs.adb.device");
+
+        if (configuredDevice != null && !configuredDevice.isBlank()) {
+            return configuredDevice.trim();
+        }
+
+        try {
+            String devicesOutput =
+                    executeAndRead(ADB, "devices");
+
+            String selectedDevice = "";
+            for (String line : devicesOutput.split("\\R")) {
+
+                if (line == null) {
+                    continue;
+                }
+
+                String trimmed = line.trim();
+                if (trimmed.isEmpty() ||
+                        trimmed.startsWith("List of devices attached")) {
+                    continue;
+                }
+
+                if (!trimmed.endsWith("\tdevice")) {
+                    continue;
+                }
+
+                String device = trimmed.substring(0, trimmed.indexOf('\t')).trim();
+                if (selectedDevice.isBlank()) {
+                    selectedDevice = device;
+                } else {
+                    return selectedDevice;
+                }
+            }
+
+            return selectedDevice;
+        } catch (Exception e) {
+            return "";
+        }
+    }
 
     public static void execute(String... command)
             throws IOException, InterruptedException {
